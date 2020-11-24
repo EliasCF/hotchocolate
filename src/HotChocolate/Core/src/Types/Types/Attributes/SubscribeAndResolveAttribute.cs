@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using HotChocolate.Execution;
 using HotChocolate.Internal;
 using HotChocolate.Resolvers.Expressions;
 using HotChocolate.Types.Descriptors;
@@ -33,6 +34,11 @@ namespace HotChocolate.Types
                     IExtendedType? rewritten = typeRef.Type.IsArrayOrList
                         ? typeRef.Type.ElementType
                         : null;
+
+                    if (rewritten is null && typeof(ISourceStream).IsAssignableFrom(typeRef.Type))
+                    {
+                        rewritten = typeRef.Type.TypeArguments[0];
+                    }
 
                     if (rewritten is null)
                     {
